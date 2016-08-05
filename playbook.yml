@@ -1,0 +1,49 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+    - name: apt-get update 
+      raw: sudo apt-get update -qq 
+    - name: Install python 2.7 
+      raw: sudo apt-get install -qq python2.7 
+
+    - name: Fix hostname to allow sudo
+      remote_user: root
+      become: yes
+      lineinfile: dest=/etc/hosts line='127.0.0.1 ubuntu-xenial' owner=root group=root mode=0644
+
+    - name: Install PostgreSQL
+      remote_user: root
+      become: yes
+      apt: pkg=postgresql,postgresql-contrib,php,phppgadmin
+    - name: Configure PhpPgAdmin
+      remote_user: root
+      become: yes
+      template: src=pgadmin/config.inc.php dest=/etc/phppgadmin/config.inc.php
+    - name: Configure Apache for PhpPgAdmin
+      remote_user: root
+      become: yes
+      template: src=pgadmin/phppgadmin.conf dest=/etc/apache2/conf-available/phppgadmin.conf
+    - name: Restart Apache
+      remote_user: root
+      become: yes
+      service: name=apache2 state=restarted
+
+    - name: Install composer
+      remote_user: root
+      become: yes
+      shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin creates=/usr/local/bin/composer
+    - name: Rename composer.phar to composer
+      remote_user: root
+      become: yes
+      shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer creates=/usr/local/bin/composer
+    - name: Make composer executable
+      remote_user: root
+      become: yes
+      file: path=/usr/local/bin/composer mode=a+x state=file
+
+    - name: Install git
+      remote_user: root
+      become: yes
+      apt: pkg=git
+
