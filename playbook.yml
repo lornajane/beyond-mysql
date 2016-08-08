@@ -42,6 +42,11 @@
       become: yes
       file: path=/usr/local/bin/composer mode=a+x state=file
 
+    - name: Install Redis
+      remote_user: root
+      become: yes
+      apt: pkg=redis-server
+
     - name: Install git
       remote_user: root
       become: yes
