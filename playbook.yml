@@ -47,6 +47,15 @@
       become: yes
       apt: pkg=redis-server
 
+    - name: Install CouchDB
+      remote_user: root
+      become: yes
+      apt: pkg=couchdb
+    - name: Install Node + npm
+      remote_user: root
+      become: yes
+      apt: pkg=nodejs,npm,nodejs-legacy
+
     - name: Install git
       remote_user: root
       become: yes
