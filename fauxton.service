@@ -1,0 +1,12 @@
+[Unit]
+Description=Fauxton
+
+[Service]
+ExecStart=/usr/bin/npm run dev
+User=ubuntu
+WorkingDirectory=/vagrant/fauxton/couchdb-fauxton
+Restart=always
+
+[Install]
+
+

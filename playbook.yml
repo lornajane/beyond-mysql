@@ -15,7 +15,7 @@
     - name: Install PostgreSQL
       remote_user: root
       become: yes
-      apt: pkg=postgresql,postgresql-contrib,php,phppgadmin
+      apt: pkg=postgresql,postgresql-contrib,php,phppgadmin,libapache2-mod-php
     - name: Configure PhpPgAdmin
       remote_user: root
       become: yes
@@ -50,14 +50,33 @@
     - name: Install CouchDB
       remote_user: root
       become: yes
-      apt: pkg=couchdb
+      apt: pkg=couchdb,daemon
+    - name: Copy CouchDB config over
+      remote_user: root
+      become: yes
+      copy: src=couchdb-local.ini dest=/etc/couchdb/local.ini
+    - name: Restart CouchDB
+      remote_user: root
+      become: yes
+      raw: systemctl restart couchdb.service
     - name: Install Node + npm
       remote_user: root
       become: yes
       apt: pkg=nodejs,npm,nodejs-legacy
+    - name: Copy fauxton systemd file over
+      remote_user: root
+      become: yes
+      copy: src=fauxton.service dest=/etc/systemd/system/fauxton.service
+    - name: Enable fauxton service
+      remote_user: root
+      become: yes
+      raw: systemctl enable fauxton.service
+    - name: Reload Systemd config files
+      remote_user: root
+      become: yes
+      raw: systemctl daemon-reload
 
     - name: Install git
       remote_user: root
       become: yes
       apt: pkg=git
-
